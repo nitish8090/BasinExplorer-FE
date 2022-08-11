@@ -1,0 +1,26 @@
+.LoginForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70vh;
+}
+
+.LoginBox{ 
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+}
+
+.errorMessage{
+    color: red;
+    background-color: rgba(202, 10, 10, 0.267);
+    padding: 1em 2em ;
+    margin-bottom: 2em;
+    border-radius: 5px;
+}
+
+th, td{
+    border: 1px solid black;
+    padding: 0.5em;
+}
