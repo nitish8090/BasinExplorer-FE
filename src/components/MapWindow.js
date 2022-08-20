@@ -98,8 +98,8 @@ export default function MapWindow() {
       })
     })
 
-    var url = 'http://127.0.0.1:8000/BasinManager/JunctionPoint/'
-    if (junctionOrder){
+    var url = 'http://beta.fruitly.co.in:51000/BasinManager/JunctionPoint/'
+    if (junctionOrder && junctionOrder!='all'){
       url+=`?grid_code=${junctionOrder}`
     }
     console.log(url)
@@ -148,7 +148,7 @@ export default function MapWindow() {
 
     const DEMLayer = new TileLayer({
       source: new TileWMS({
-        url: 'http://localhost:8080/geoserver/BasinExplorer/wms',
+        url: 'http://nitishpatel.in:8080/geoserver/BasinExplorer/wms',
         params: {
           service: 'WMS',
           request: 'GetMap',
@@ -182,7 +182,7 @@ export default function MapWindow() {
     });
 
     // Add other layers
-    axios.get('http://127.0.0.1:8000/BasinManager/Watershed/', {headers: {Authorization: `Token ${localStorage.getItem('beAuthToken')}`}}).then((response) => {
+    axios.get('http://beta.fruitly.co.in:51000/BasinManager/Watershed/', {headers: {Authorization: `Token ${localStorage.getItem('beAuthToken')}`}}).then((response) => {
       const vectorSource = new VectorSource({
         features: new GeoJSON().readFeatures(response.data),
       });
@@ -223,7 +223,7 @@ export default function MapWindow() {
       }),
     });
 
-    axios.get('http://127.0.0.1:8000/BasinManager/RiverStream/', {headers: {Authorization: `Token ${localStorage.getItem('beAuthToken')}`}}).then((response) => {
+    axios.get('http://beta.fruitly.co.in:51000/BasinManager/RiverStream/', {headers: {Authorization: `Token ${localStorage.getItem('beAuthToken')}`}}).then((response) => {
       const vectorSource = new VectorSource({
         features: new GeoJSON().readFeatures(response.data),
       });

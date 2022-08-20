@@ -4,6 +4,10 @@
     justify-content: center;
     align-items: center;
     height: 70vh;
+    
+background: rgb(234,255,222);
+background: linear-gradient(90deg, rgba(234,255,222,1) 0%, rgba(119,232,255,1) 100%);
+    min-height: 94vh;
 }
 
 .LoginBox{ 
@@ -23,4 +27,8 @@
 th, td{
     border: 1px solid black;
     padding: 0.5em;
+}
+
+.hintBox{
+    display: none;
 }

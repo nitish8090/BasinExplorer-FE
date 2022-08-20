@@ -21,7 +21,7 @@ export default function LoginForm() {
       event.preventDefault();
       console.log(userName, password)
 
-      const url = 'http://127.0.0.1:8000/User/GetToken/'
+      const url = 'http://beta.fruitly.co.in:51000/User/GetToken/'
       axios.post(url, {
         username: userName,
         password: password
@@ -64,7 +64,7 @@ export default function LoginForm() {
         <Button variant="contained" sx={{margin: '0.5em'}} type='submit' >Login</Button>
       </Box>
 
-      <div>
+      <div className='hintBox'>
         <h1>Hints</h1>
         <table>
           <tr>
