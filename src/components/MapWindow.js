@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+
 import { Map, View } from 'ol';
 import VectorLayer from 'ol/layer/Vector';
 import TileLayer from 'ol/layer/Tile';
@@ -6,24 +7,21 @@ import TileWMS from 'ol/source/TileWMS';
 import { transform } from 'ol/proj.js';
 import OSM from 'ol/source/OSM';
 import { Vector as VectorSource } from 'ol/source';
-import 'ol/ol.css';
-import './MapWindow.css';
 import GeoJSON from 'ol/format/GeoJSON';
-import axios from 'axios';
-
 import Overlay from 'ol/Overlay';
-import XYZ from 'ol/source/XYZ';
 import { toLonLat } from 'ol/proj';
 import { toStringHDMS } from 'ol/coordinate';
 import { ZoomSlider, ScaleLine } from 'ol/control';
-import { getUid } from 'ol/util';
-import { Fill, Stroke, Style, Icon, Circle, Text } from 'ol/style';
+import { Fill, Stroke, Style, Circle, Text } from 'ol/style';
+import 'ol/ol.css';
 
-import Box from '@mui/material/Box';
+import './MapWindow.css';
+import { Config } from '../config';
+import axios from 'axios';
+
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import FormGroup from '@mui/material/FormGroup';
 import Select from '@mui/material/Select';
 
 export default function MapWindow() {
@@ -37,7 +35,9 @@ export default function MapWindow() {
     target: '',
     layers: [
       new TileLayer({
-        source: new OSM(),
+        source: new OSM({
+          url:  'https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'
+        }),
       }),
 
     ],
@@ -55,7 +55,8 @@ export default function MapWindow() {
 
   const container = useRef();
   const content = useRef();
-
+  
+  // To close popup
   const closePopUp = function () {
     map.getOverlayById('info').setPosition(undefined);
     return false;
@@ -98,8 +99,9 @@ export default function MapWindow() {
       })
     })
 
-    var url = 'http://beta.fruitly.co.in:51000/BasinManager/JunctionPoint/'
-    if (junctionOrder && junctionOrder!='all'){
+    // Add junction layer
+    var url = `${Config.base_url}/BasinManager/JunctionPoint/`
+    if (junctionOrder && junctionOrder!=='all'){
       url+=`?grid_code=${junctionOrder}`
     }
     console.log(url)
@@ -121,6 +123,7 @@ export default function MapWindow() {
 
       map.addLayer(JunctionPointLayer);
 
+      // Fill up junction drop down
       if (!junctionOrder){
       var tempJunctionOrderList = []
       response.data.features.forEach((e)=>{
@@ -146,22 +149,22 @@ export default function MapWindow() {
     }));
 
 
-    const DEMLayer = new TileLayer({
-      source: new TileWMS({
-        url: 'http://nitishpatel.in:8080/geoserver/BasinExplorer/wms',
-        params: {
-          service: 'WMS',
-          request: 'GetMap',
-          layers: 'BasinExplorer:srtm_dem_3857',
-          width: 661, height: 768,
-          srs: 'EPSG:3857'
-        },
-        serverType: 'geoserver',
-        transition: 0
-      }),
-      properties: { 'name': 'DEMLayer' }
-    })
-    map.addLayer(DEMLayer);
+    // const DEMLayer = new TileLayer({
+    //   source: new TileWMS({
+    //     url: 'http://nitishpatel.in:8080/geoserver/BasinExplorer/wms',
+    //     params: {
+    //       service: 'WMS',
+    //       request: 'GetMap',
+    //       layers: 'BasinExplorer:srtm_dem_3857',
+    //       width: 661, height: 768,
+    //       srs: 'EPSG:3857'
+    //     },
+    //     serverType: 'geoserver',
+    //     transition: 0
+    //   }),
+    //   properties: { 'name': 'DEMLayer' }
+    // })
+    // map.addLayer(DEMLayer);
 
     const style = new Style({
       stroke: new Stroke({
@@ -182,7 +185,7 @@ export default function MapWindow() {
     });
 
     // Add other layers
-    axios.get('http://beta.fruitly.co.in:51000/BasinManager/Watershed/', {headers: {Authorization: `Token ${localStorage.getItem('beAuthToken')}`}}).then((response) => {
+    axios.get(`${Config.base_url}/BasinManager/Watershed/`, {headers: {Authorization: `Token ${localStorage.getItem('beAuthToken')}`}}).then((response) => {
       const vectorSource = new VectorSource({
         features: new GeoJSON().readFeatures(response.data),
       });
@@ -223,7 +226,7 @@ export default function MapWindow() {
       }),
     });
 
-    axios.get('http://beta.fruitly.co.in:51000/BasinManager/RiverStream/', {headers: {Authorization: `Token ${localStorage.getItem('beAuthToken')}`}}).then((response) => {
+    axios.get(`${Config.base_url}/BasinManager/RiverStream/`, {headers: {Authorization: `Token ${localStorage.getItem('beAuthToken')}`}}).then((response) => {
       const vectorSource = new VectorSource({
         features: new GeoJSON().readFeatures(response.data),
       });
@@ -242,27 +245,13 @@ export default function MapWindow() {
       map.addLayer(RiverStreamLayer)
     });
 
-    // Style for junctions
-    // const iconStyle = new Style({
-    //   image: new Icon({
-    //     anchor: [0.5, 46],
-    //     anchorXUnits: 'fraction',
-    //     anchorYUnits: 'pixels',
-    //     src: '../data/icon.png',
-    //   }),
-    // });
-
-
-
     addJunctionLayer()
-
   }, [])
 
 
 
   useEffect(() => {
 
-    console.log("Map changes")
 
     // Add overlay pop 
     setPopup(new Overlay({
@@ -287,21 +276,6 @@ export default function MapWindow() {
         console.log(f, l)
         newHTML += `<li><code>` + f.get('grid_code') + `</code></li>`
       })
-      // console.log(map.getAllLayers().forEach((e)=>{
-      //   console.log(e.get('name'))
-      // }))
-
-      // var url = DEMLayer.source.getFeatureInfoUrl(
-      //   evt.coordinate,
-      //   map.view.getResolution(),
-      //   'EPSG:3857',
-      //   {'INFO_FORMAT': 'text/html'}
-      // );
-      // console.log(url)
-
-
-
-
 
       content.current.innerHTML = newHTML;
       map.getOverlayById('info').setPosition(coordinate);
@@ -366,7 +340,7 @@ export default function MapWindow() {
 
       <div ref={mapElement} id='map' className="map-container" />
       <div ref={container} className="ol-popup">
-        <a href="#" onClick={closePopUp} className="ol-popup-closer"></a>
+        <button onClick={closePopUp} className="ol-popup-closer">✖</button>
         <div ref={content} ></div>
       </div>
     </div>

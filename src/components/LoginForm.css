@@ -1,14 +1,41 @@
 .LoginForm {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: 100vh;
+    
+    background-image: url('../assets/dam-bg.jpg');
+    background-size: cover;
+}
+
+.project-description{
+    flex-basis: 30%;
+    min-height: 100vh;
+    padding: 65px 1em 0;
+    background-color: white;
+    box-shadow: 5px 5px 10px rgb(87, 87, 87);
+}
+
+.project-login {
+    flex-basis: 70%;
+    display: flex;
     justify-content: center;
     align-items: center;
-    height: 70vh;
-    
-background: rgb(234,255,222);
-background: linear-gradient(90deg, rgba(234,255,222,1) 0%, rgba(119,232,255,1) 100%);
-    min-height: 94vh;
+    flex-direction: column;
 }
+
+@media only screen and (max-width: 600px) {
+    .LoginForm {
+        flex-direction: column-reverse;
+    }
+    .project-description{
+        flex-basis: 100%;
+    }
+    .project-login {
+        min-height: 70vh;
+        flex-basis: 100%;
+    }
+  }
 
 .LoginBox{ 
     display: flex;
