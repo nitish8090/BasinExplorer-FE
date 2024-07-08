@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Map, View } from 'ol';
 import VectorLayer from 'ol/layer/Vector';
 import TileLayer from 'ol/layer/Tile';
-import TileWMS from 'ol/source/TileWMS';
 import { transform } from 'ol/proj.js';
 import OSM from 'ol/source/OSM';
 import { Vector as VectorSource } from 'ol/source';
